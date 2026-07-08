@@ -44,8 +44,9 @@ shipped; each ships as its own commit.
 
 ## Explicitly deferred to the user (online-service connections)
 
-- [ ] Create Supabase project, run migrations, set env vars
+- [x] Create GitHub remote and push (repo connected mid-build at the user's request; pushed after every feature above)
+- [ ] Create Supabase project, run migrations (`supabase/migrations/*.sql`), set env vars
 - [ ] Create Upstash Redis + QStash instances, set env vars
 - [ ] Create Groq API key, set env var
-- [ ] Create GitHub remote and push
 - [ ] Connect Vercel project for deploys
+- [ ] Run `npm run seed -- --org=<your-workspace-slug>` once Supabase is connected, to load demo data
