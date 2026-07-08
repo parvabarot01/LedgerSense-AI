@@ -160,21 +160,36 @@ export interface AuditLogEntry {
   created_at: string;
 }
 
+// postgrest-js's GenericTable requires Row/Insert/Update to structurally satisfy
+// Record<string, unknown>, which a plain interface (no index signature) doesn't
+// unless intersected with one - see the assignability check postgrest-js relies on.
+type WithIndex<T> = T & { [key: string]: unknown };
+type Table<Row> = {
+  Row: WithIndex<Row>;
+  Insert: Partial<WithIndex<Row>>;
+  Update: Partial<WithIndex<Row>>;
+  Relationships: [];
+};
+
 export interface Database {
   public: {
     Tables: {
-      organizations: { Row: Organization; Insert: Partial<Organization>; Update: Partial<Organization> };
-      memberships: { Row: Membership; Insert: Partial<Membership>; Update: Partial<Membership> };
-      data_sources: { Row: DataSource; Insert: Partial<DataSource>; Update: Partial<DataSource> };
-      transactions: { Row: LedgerRecord; Insert: Partial<LedgerRecord>; Update: Partial<LedgerRecord> };
-      ledger_entries: { Row: LedgerRecord; Insert: Partial<LedgerRecord>; Update: Partial<LedgerRecord> };
-      reconciliation_sets: { Row: ReconciliationSet; Insert: Partial<ReconciliationSet>; Update: Partial<ReconciliationSet> };
-      detection_runs: { Row: DetectionRun; Insert: Partial<DetectionRun>; Update: Partial<DetectionRun> };
-      matches: { Row: Match; Insert: Partial<Match>; Update: Partial<Match> };
-      exceptions: { Row: ExceptionRow; Insert: Partial<ExceptionRow>; Update: Partial<ExceptionRow> };
-      explanations: { Row: Explanation; Insert: Partial<Explanation>; Update: Partial<Explanation> };
-      resolutions: { Row: Resolution; Insert: Partial<Resolution>; Update: Partial<Resolution> };
-      audit_log: { Row: AuditLogEntry; Insert: Partial<AuditLogEntry>; Update: Partial<AuditLogEntry> };
+      organizations: Table<Organization>;
+      memberships: Table<Membership>;
+      data_sources: Table<DataSource>;
+      transactions: Table<LedgerRecord>;
+      ledger_entries: Table<LedgerRecord>;
+      reconciliation_sets: Table<ReconciliationSet>;
+      detection_runs: Table<DetectionRun>;
+      matches: Table<Match>;
+      exceptions: Table<ExceptionRow>;
+      explanations: Table<Explanation>;
+      resolutions: Table<Resolution>;
+      audit_log: Table<AuditLogEntry>;
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
