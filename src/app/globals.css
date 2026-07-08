@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  LedgerSense design tokens — "the modern ledger."
+  Warm paper base, not a dark console: this is finance-desk software the user
+  trusts with their numbers. See DESIGN_SYSTEM.md for the full rationale.
+*/
+:root {
+  --ledger-paper: #f7f4ec;
+  --paper-raised: #ffffff;
+  --ink-navy: #141b22;
+  --ink-navy-soft: #4a5560;
+
+  --reconciled-green: #1f7a5c;
+  --reconciled-green-tint: rgba(31, 122, 92, 0.08);
+
+  --exception-red: #c0392b;
+  --exception-red-tint: rgba(192, 57, 43, 0.08);
+
+  --trace-blue: #2d6cdf;
+  --trace-blue-tint: rgba(45, 108, 223, 0.1);
+
+  --brass-gold: #b8942f;
+  --brass-gold-tint: rgba(184, 148, 47, 0.1);
+
+  --hairline: #e4dfd1;
+
+  --dur-fast: 150ms;
+  --dur-base: 280ms;
+  --dur-slow: 450ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --background: var(--ledger-paper);
+  --foreground: var(--ink-navy);
+}
+
+* {
+  border-color: var(--hairline);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .figures-tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  .money {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    text-align: right;
+  }
+
+  .hairline {
+    border-color: var(--hairline);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
