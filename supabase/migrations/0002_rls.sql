@@ -47,6 +47,10 @@ as $$
 $$;
 
 -- Auto-provision an owner membership when a user creates an organization.
+-- Guarded on auth.uid() so service-role inserts (seed scripts, admin
+-- tooling) can create an organization without a null-user_id membership
+-- insert failing the whole transaction; those callers add memberships
+-- explicitly instead.
 create or replace function handle_new_organization()
 returns trigger
 language plpgsql
@@ -54,8 +58,10 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into memberships (org_id, user_id, role)
-  values (new.id, auth.uid(), 'owner');
+  if auth.uid() is not null then
+    insert into memberships (org_id, user_id, role)
+    values (new.id, auth.uid(), 'owner');
+  end if;
   return new;
 end;
 $$;
