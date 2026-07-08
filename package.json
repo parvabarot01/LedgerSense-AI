@@ -25,7 +25,6 @@
     "papaparse": "^5.5.4",
     "react": "^18",
     "react-dom": "^18",
-    "recharts": "^3.9.2",
     "simple-statistics": "^7.9.3",
     "zod": "^4.4.3"
   },
