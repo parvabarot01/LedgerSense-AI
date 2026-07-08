@@ -207,8 +207,14 @@ create policy resolutions_select on resolutions
   for select using (is_org_member(org_id));
 create policy resolutions_insert on resolutions
   for insert with check (has_org_role(org_id, array['owner', 'admin', 'analyst']::org_role[]));
+-- A checker can never decide their own proposal - enforced here at the
+-- database level too, not just in the decideResolution server action, since
+-- this is the one governance rule the whole maker-checker promise rests on.
 create policy resolutions_update on resolutions
-  for update using (has_org_role(org_id, array['owner', 'admin', 'checker']::org_role[]));
+  for update using (
+    has_org_role(org_id, array['owner', 'admin', 'checker']::org_role[])
+    and proposed_by <> auth.uid()
+  );
 
 -- ---------------------------------------------------------------------------
 -- audit_log (append-only for members; no update/delete policy means no one

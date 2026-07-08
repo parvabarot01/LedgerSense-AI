@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMembership, hasRole } from "@/lib/membership";
 import { toCsv } from "@/lib/csv";
 import { recordAudit } from "@/lib/audit";
+import { auditReportSchema } from "@/lib/validation/schemas";
 import type { Explanation, Resolution } from "@/types/database";
 
 /**
@@ -12,10 +13,14 @@ import type { Explanation, Resolution } from "@/types/database";
  * needing direct database access.
  */
 export async function GET(request: NextRequest) {
-  const orgId = request.nextUrl.searchParams.get("orgId");
-  const reconciliationSetId = request.nextUrl.searchParams.get("reconciliationSetId") ?? undefined;
-
-  if (!orgId) return NextResponse.json({ error: "orgId is required" }, { status: 400 });
+  const parsed = auditReportSchema.safeParse({
+    orgId: request.nextUrl.searchParams.get("orgId") ?? undefined,
+    reconciliationSetId: request.nextUrl.searchParams.get("reconciliationSetId") ?? undefined,
+  });
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
+  }
+  const { orgId, reconciliationSetId } = parsed.data;
 
   const supabase = await createClient();
   const {
